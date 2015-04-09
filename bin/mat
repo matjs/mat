@@ -1,0 +1,121 @@
+#!/usr/bin/env node --harmony
+
+var Liftoff     = require('liftoff');
+var minimist    = require('minimist');
+var semver      = require('semver');
+var tildify     = require('tildify');
+var chalk       = require('chalk');
+var cliPackage  = require('../package');
+var Log         = require('../lib/log');
+var log         = new Log('INFO');
+var argv        = minimist(process.argv.slice(2));
+var versionFlag = argv.v || argv.version;
+var proxyFlag   = argv.p || argv.proxy;
+var tasks       = argv._;
+var toRun       = tasks.length ? tasks : ['default'];
+var matInst;
+
+var failed = false;
+process.once('exit', function(code) {
+  if (code === 0 && failed) {
+    process.exit(1);
+  }
+});
+
+var cli = new Liftoff({
+  name: 'mat'
+});
+
+cli.launch({
+  cwd: argv.cwd,
+  configPath: argv.matfile,
+  require: argv.require,
+  completion: argv.completion
+}, launch);
+
+function launch(env) {
+  if (env.modulePackage && typeof env.modulePackage.version !== 'undefined') {
+    if (semver.gt(cliPackage.version, env.modulePackage.version)) {
+      log.wran('Global mat version', cliPackage.version);
+      log.wran('Local mat version', env.modulePackage.version);
+    }
+  }
+
+  if (versionFlag) {
+    log.info('CLI version', cliPackage.version);
+    if (env.modulePackage && typeof env.modulePackage.version !== 'undefined') {
+      log.info('Local version', env.modulePackage.version);
+    }
+    process.exit(0);
+  }
+
+  if (proxyFlag) {
+    var matInst = require('../index.js');
+    matInst.launch();
+    return;
+  }
+
+  if (!env.configPath) {
+    log.error('No matfile found');
+    process.exit(1);
+  }
+
+  if (!env.modulePath) {
+    log.error('Local mat not found in', tildify(env.cwd));
+    log.error('Try running: npm install mat');
+    process.exit(1);
+  }
+
+  require(env.configPath);
+
+  var matInst = require(env.modulePath);
+  logEvents(matInst);
+
+  matInst.start(toRun, function () {
+    matInst.launch();
+  });
+}
+
+function logEvents(matInst) {
+  matInst.on('err', function () {
+    failed = true;
+  });
+
+  matInst.on('task_start', function (e) {
+    log.info(chalk.white('Starting'), '\'' + e.task + '\'');
+  });
+
+  matInst.on('task_stop', function (e) {
+    log.info(chalk.white('Finished'), '\'' + e.task + '\'');
+  });
+
+  matInst.on('task_err', function (e) {
+    var msg = formatError(e);
+    log.error('\'' + e.task + '\' error');
+    log.error(msg);
+  });
+
+  matInst.on('task_not_found', function (err) {
+    log.error('Task \'' + err.task + '\' is not in your matfile');
+    process.exit(1);
+  });
+}
+
+function formatError(e) {
+  if (!e.err) {
+    return e.message;
+  }
+
+  // PluginError
+  if (typeof e.err.showStack === 'boolean') {
+    return e.err.toString();
+  }
+
+  // normal error
+  if (e.err.stack) {
+    return e.err.stack;
+  }
+
+  // unknown (string, number, etc.)
+  return new Error(String(e.err)).stack;
+}
