@@ -4,3 +4,4 @@
 
 ## 文档
 
+详细文档请查看[matjs官方网站](http://matjs.github.io/)
