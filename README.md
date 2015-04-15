@@ -17,7 +17,7 @@ var res  = require('mat-respond');
 // rap mock数据环境
 mat.task('default', function () {
   mat.use(rap({
-    projectId: "123"
+    projectId: '123'
   }));
 
   mat.use(opoa({
@@ -25,7 +25,7 @@ mat.task('default', function () {
   }));
 })
 
-// daily 数据接口环境
+// daily环境数据反向代理
 mat.task('daily', function () {
   mat.use(opoa({
     root: './',
@@ -33,7 +33,7 @@ mat.task('daily', function () {
   }));
 })
 
-// 线上环境
+// 线上环境静态资源映射
 mat.task('online', function () {
   mat.use(res([
     // 将线上的js映射到本地
