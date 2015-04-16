@@ -29,7 +29,7 @@ mat.task('default', function () {
 mat.task('daily', function () {
   mat.use(opoa({
     root: './',
-    proxy: 'p.alimama.net'
+    proxy: 'www.abc.net'
   }));
 })
 
@@ -39,7 +39,7 @@ mat.task('online', function () {
     // 将线上的js映射到本地
     {
       pattern: 'boot/index-min.js',
-      responder: '/Users/naij/project/pub/boot/index.js'
+      responder: '/Users/naij/project/boot/index.js'
     }, 
     // 将-min后缀的js映射到非-min的js
     {
