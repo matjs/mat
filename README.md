@@ -9,20 +9,20 @@
 ## 一个简单的matfile例子
 
 ```javascript
-var mat  = require('mat');
-var rap  = require('mat-rap');
-var opoa = require('mat-opoa');
-var res  = require('mat-respond');
+var mat  = require('mat')
+var rap  = require('mat-rap')
+var opoa = require('mat-opoa')
+var res  = require('mat-respond')
 
 // rap mock数据环境
 mat.task('default', function () {
   mat.use(rap({
     projectId: '123'
-  }));
+  }))
 
   mat.use(opoa({
     root: './'
-  }));
+  }))
 })
 
 // daily环境数据反向代理
@@ -30,7 +30,7 @@ mat.task('daily', function () {
   mat.use(opoa({
     root: './',
     proxy: 'www.abc.net'
-  }));
+  }))
 })
 
 // 线上环境静态资源映射
