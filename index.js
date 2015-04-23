@@ -1,12 +1,13 @@
-var path    = require('path')
-var util    = require('util')
-var koa     = require('koa')
-var chalk   = require('chalk')
+var path         = require('path')
+var util         = require('util')
+var koa          = require('koa')
+var chalk        = require('chalk')
 var Orchestrator = require('orchestrator')
-var error   = require('./lib/middleware/error')
-var forward = require('./lib/middleware/forward')
-var mutil   = require('./util/mutil')
-var app     = koa()
+var error        = require('./lib/middleware/error')
+var serve        = require('./lib/middleware/static')
+var proxy        = require('./lib/middleware/proxy')
+var mutil        = require('./util/mutil')
+var app          = koa()
 
 function Mat() {
   Orchestrator.call(this)
@@ -25,6 +26,9 @@ Mat.prototype.env = function (env) {
   if (env.port) {
     app.port = env.port
   }
+  if (env.root) {
+    app.root = env.root
+  }
 }
 
 /**
@@ -38,13 +42,16 @@ Mat.prototype.task = Mat.prototype.add
 Mat.prototype._middleware = function() {
   app.use(error)
 
-  app.use(forward())
 
   this.middleware.forEach(function (fn) {
     if (mutil.isGeneratorFunction(fn)) {
       app.use(fn)
     }
   })
+
+  app.use(serve())
+
+  app.use(proxy())
 }
 
 /**
