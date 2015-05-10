@@ -38,8 +38,8 @@ Mat.prototype.task = Mat.prototype.add
 /**
  * url过滤器
  */
-Mat.prototype.url = function (pattern) {
-  var url = new Url(pattern)
+Mat.prototype.url = function (rule) {
+  var url = new Url(rule)
   this.urls.push(url)
   return url
 }

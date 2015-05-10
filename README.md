@@ -4,25 +4,21 @@
 
 ## 文档
 
-详细文档请查看[matjs官方网站](http://matjs.github.io/)
+详细文档请查看[matjs官方网站](http://matjs.com/)
 
 ## 一个简单的matfile例子
 
 ```javascript
 var mat  = require('mat')
 var rap  = require('mat-rap')
-var opoa = require('mat-opoa')
 var res  = require('mat-respond')
 
 // rap mock数据环境
 mat.task('default', function () {
-  mat.use(rap({
-    projectId: '123'
-  }))
-
-  mat.use(opoa({
-    root: './'
-  }))
+  mat.url([/\.json/])
+    .use(rap({
+      projectId: '633'
+    }))
 })
 
 // daily环境数据反向代理
