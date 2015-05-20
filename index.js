@@ -64,7 +64,7 @@ Mat.prototype.launch = function () {
 Mat.prototype._middleware = function() {
   app.use(error)
 
-  app.use(forward())
+  // app.use(forward())
 
   this.urls.forEach(function (url) {
     app.use(url.compose())
