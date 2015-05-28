@@ -14,7 +14,7 @@ var rap  = require('mat-rap')
 var proxy = require('mat-proxy')
 var rewrite = require('mat-rewrite')
 
-// rap mock数据环境
+// rap模拟数据
 mat.task('default', function () {
   mat.url([/\.json/])
     .use(rap({
@@ -22,7 +22,7 @@ mat.task('default', function () {
     }))
 })
 
-// daily环境数据反向代理
+// 反向代理
 mat.task('daily', function () {
   mat.url([/\.json/])
     .use(proxy({
@@ -30,19 +30,11 @@ mat.task('daily', function () {
     }))
 })
 
-// 线上环境静态资源映射
+// url重写
 mat.task('online', function () {
-  mat.use(res([
-    // 将线上的js映射到本地
-    {
-      pattern: 'boot/index-min.js',
-      responder: '/Users/naij/project/boot/index.js'
-    }, 
-    // 将-min后缀的js映射到非-min的js
-    {
-      pattern: '(.*)-min.js',
-      responder: '$1.js'
-    }
-  ]))
+  mat.url([/\.js/])
+    .use(rewrite([
+      [/-min\.js/g, '.js']
+    ]))
 })
 ```
