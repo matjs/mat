@@ -11,22 +11,23 @@
 ```javascript
 var mat  = require('mat')
 var rap  = require('mat-rap')
-var res  = require('mat-respond')
+var proxy = require('mat-proxy')
+var rewrite = require('mat-rewrite')
 
 // rap mock数据环境
 mat.task('default', function () {
   mat.url([/\.json/])
     .use(rap({
-      projectId: '633'
+      projectId: 'your rap project id'
     }))
 })
 
 // daily环境数据反向代理
 mat.task('daily', function () {
-  mat.use(opoa({
-    root: './',
-    proxy: 'www.abc.net'
-  }))
+  mat.url([/\.json/])
+    .use(proxy({
+      proxyPass: 'your.proxy.host'
+    }))
 })
 
 // 线上环境静态资源映射

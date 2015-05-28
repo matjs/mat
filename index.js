@@ -4,7 +4,6 @@ var koa          = require('koa')
 var chalk        = require('chalk')
 var Orchestrator = require('orchestrator')
 var error        = require('./lib/middleware/error')
-var forward      = require('./lib/middleware/forward')
 var serve        = require('./lib/middleware/static')
 var proxy        = require('./lib/middleware/proxy')
 var Url          = require('./lib/url')
@@ -13,10 +12,16 @@ var app          = koa()
 
 function Mat() {
   Orchestrator.call(this)
-  this.urls = []
+  this.init()
 }
 
 util.inherits(Mat, Orchestrator)
+
+Mat.prototype.init = function () {
+  app.port = 8989
+  app.root = './'
+  this.urls = []
+}
 
 /**
  * 设置运行mat服务时需要的参数
@@ -52,7 +57,7 @@ Mat.prototype.launch = function () {
     this._start = true
     this._middleware()
 
-    app.listen(app.port || 8989, function () {
+    app.listen(app.port, function () {
       console.log(chalk.green('mat is running'))
     })
   }
@@ -64,13 +69,11 @@ Mat.prototype.launch = function () {
 Mat.prototype._middleware = function() {
   app.use(error)
 
-  // app.use(forward())
-
   this.urls.forEach(function (url) {
     app.use(url.compose())
   })
 
-  app.use(serve(app.root || './'))
+  app.use(serve(app.root))
 
   app.use(proxy())
 }
