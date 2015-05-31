@@ -12,7 +12,6 @@
 var mat  = require('mat')
 var rap  = require('mat-rap')
 var proxy = require('mat-proxy')
-var rewrite = require('mat-rewrite')
 
 // rap模拟数据
 mat.task('default', function () {
@@ -33,8 +32,8 @@ mat.task('daily', function () {
 // url重写
 mat.task('online', function () {
   mat.url([/\.js/])
-    .use(rewrite([
+    .rewrite([
       [/-min\.js/g, '.js']
-    ]))
+    ])
 })
 ```
