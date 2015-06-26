@@ -58,7 +58,7 @@ Mat.prototype.launch = function () {
     this._middleware()
 
     app.listen(app.port, function () {
-      console.log(chalk.green('mat is running'))
+      console.log(chalk.green('mat is running on ' + app.port))
     })
   }
 }
