@@ -36,8 +36,8 @@ cli.launch({
 function launch(env) {
   if (env.modulePackage && typeof env.modulePackage.version !== 'undefined') {
     if (semver.gt(cliPackage.version, env.modulePackage.version)) {
-      log.wran('Global mat version', cliPackage.version)
-      log.wran('Local mat version', env.modulePackage.version)
+      log.warn('Global mat version', cliPackage.version)
+      log.warn('Local mat version', env.modulePackage.version)
     }
   }
 
