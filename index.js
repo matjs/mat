@@ -9,6 +9,8 @@ var serve        = require('./lib/middleware/static')
 var proxy        = require('./lib/middleware/proxy')
 var Url          = require('./lib/middleware/url')
 var mutil        = require('./util/mutil')
+var Log          = require('./util/log')
+var log          = new Log('INFO')
 var app          = koa()
 
 function Mat() {
@@ -58,10 +60,20 @@ Mat.prototype.launch = function () {
     this._start = true
     this._middleware()
 
-    app.listen(app.port, function () {
-      console.log()
-      console.log(chalk.green('Mat is running on ' + app.port))
-      console.log()
+    var server = app.listen(app.port, function () {
+      log.info()
+      log.info(chalk.green('Mat is running on ' + app.port))
+      log.info()
+    })
+
+    server.on('error', function (e) {
+      var message
+      if (e.errno === 'EADDRINUSE') {
+        message = 'port ' + app.port + ' is already bound.'
+      } else {
+        message = 'Unknown Error:' + e.message
+      }
+      log.error("ERROR:", message)
     })
   }
 }
