@@ -4,9 +4,10 @@ var koa          = require('koa')
 var chalk        = require('chalk')
 var Orchestrator = require('orchestrator')
 var error        = require('./lib/middleware/error')
+var logger       = require('./lib/middleware/logger')
 var serve        = require('./lib/middleware/static')
 var proxy        = require('./lib/middleware/proxy')
-var Url          = require('./lib/url')
+var Url          = require('./lib/middleware/url')
 var mutil        = require('./util/mutil')
 var app          = koa()
 
@@ -58,7 +59,9 @@ Mat.prototype.launch = function () {
     this._middleware()
 
     app.listen(app.port, function () {
-      console.log(chalk.green('mat is running on ' + app.port))
+      console.log()
+      console.log(chalk.green('Mat is running on ' + app.port))
+      console.log()
     })
   }
 }
@@ -68,6 +71,8 @@ Mat.prototype.launch = function () {
  */
 Mat.prototype._middleware = function() {
   app.use(error)
+
+  app.use(logger())
 
   this.urls.forEach(function (url) {
     app.use(url.compose())
