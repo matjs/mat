@@ -36,4 +36,20 @@ mat.task('online', function () {
       [/-min\.js/g, '.js']
     ])
 })
+
+// combo url handler
+mat.task('combohandler', function () {
+  // 开启对combo url的支持
+  mat.env({
+    combohandler: true
+  })
+
+  // 将所有的-min结尾的js重写，去掉-min
+  // 并且所有combo的js都会被拆开，分别从本地获取
+  mat.url([/\.js/])
+    .rewrite([
+      [/onlinepath/, 'localpath']
+      [/-min/g, '']
+    ])
+})
 ```
