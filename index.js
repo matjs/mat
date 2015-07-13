@@ -97,12 +97,10 @@ Mat.prototype._middleware = function() {
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
+  mw.push(serve(app.root))
+  mw.push(proxy())
   var gen = compose(mw)
   app.use(combo(gen))
-
-  app.use(serve(app.root))
-
-  app.use(proxy())
 }
 
 module.exports = new Mat()
