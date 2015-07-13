@@ -46,6 +46,7 @@ mat.task('combohandler', function () {
 
   // 将所有的-min结尾的js重写，去掉-min
   // 并且所有combo的js都会被拆开，分别从本地获取
+  // mat会组装这些js，并最终返回一个合并过的js
   mat.url([/\.js/])
     .rewrite([
       [/onlinepath/, 'localpath'],
