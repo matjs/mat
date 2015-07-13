@@ -48,7 +48,7 @@ mat.task('combohandler', function () {
   // 并且所有combo的js都会被拆开，分别从本地获取
   mat.url([/\.js/])
     .rewrite([
-      [/onlinepath/, 'localpath']
+      [/onlinepath/, 'localpath'],
       [/-min/g, '']
     ])
 })
