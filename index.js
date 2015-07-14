@@ -49,7 +49,7 @@ Mat.prototype.env = function (env) {
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
-    app.combohandler = true
+    app.combohandler = env.combohandler
   }
 }
 
