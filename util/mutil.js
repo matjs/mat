@@ -1,4 +1,5 @@
 var path     = require('path')
+var zlib     = require('zlib')
 var basename = path.basename
 var extname  = path.extname
 
@@ -13,13 +14,24 @@ module.exports = {
     return this.isGenerator(constructor.prototype)
   },
   cobody: function (stream) {
-    return function(cb){
+    return function(cb) {
       var buffers = []
-      stream.on('data', function(chunk){
+      stream.on('data', function(chunk) {
         buffers.push(chunk)
       })
-      stream.on('end', function(){
+      stream.on('end', function() {
         cb(null, Buffer.concat(buffers))
+      })
+    }
+  },
+  cozip: function (buffer) {
+    return function (cb) {
+      zlib.unzip(buffer, function(err, buffer) {
+        if (!err) {
+          cb(null, buffer)
+        } else {
+          cb(err)
+        }
       })
     }
   },
