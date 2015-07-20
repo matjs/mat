@@ -24,7 +24,7 @@ module.exports = {
       })
     }
   },
-  cozip: function (buffer) {
+  counzip: function (buffer) {
     return function (cb) {
       zlib.unzip(buffer, function(err, buffer) {
         if (!err) {
