@@ -1,19 +1,19 @@
-var path         = require('path')
-var util         = require('util')
-var koa          = require('koa')
-var compose      = require('koa-compose')
-var chalk        = require('chalk')
-var Orchestrator = require('orchestrator')
-var error        = require('./lib/middleware/error')
-var logger       = require('./lib/middleware/logger')
-var combo        = require('./lib/middleware/combo')
-var serve        = require('./lib/middleware/static')
-var proxy        = require('./lib/middleware/proxy')
-var Url          = require('./lib/middleware/url')
-var mutil        = require('./util/mutil')
-var Log          = require('./util/log')
-var log          = new Log('INFO')
-var app          = koa()
+let path         = require('path')
+let util         = require('util')
+let koa          = require('koa')
+let compose      = require('koa-compose')
+let chalk        = require('chalk')
+let Orchestrator = require('orchestrator')
+let error        = require('./lib/middleware/error')
+let logger       = require('./lib/middleware/logger')
+let combo        = require('./lib/middleware/combo')
+let serve        = require('./lib/middleware/static')
+let proxy        = require('./lib/middleware/proxy')
+let Url          = require('./lib/middleware/url')
+let mutil        = require('./util/mutil')
+let Log          = require('./util/log')
+let log          = new Log('INFO')
+let app          = koa()
 
 function Mat() {
   Orchestrator.call(this)
@@ -57,7 +57,7 @@ Mat.prototype.env = function (env) {
  * url过滤器
  */
 Mat.prototype.url = function (rules) {
-  var url = new Url(rules)
+  let url = new Url(rules)
   this.urls.push(url)
   return url
 }
@@ -68,14 +68,14 @@ Mat.prototype.url = function (rules) {
 Mat.prototype.launch = function () {
   this._middleware()
 
-  var server = app.listen(app.port, function () {
+  let server = app.listen(app.port, function () {
     log.info()
     log.info(chalk.green('Mat is running on ' + app.port))
     log.info()
   })
 
   server.on('error', function (e) {
-    var message
+    let message
     if (e.errno === 'EADDRINUSE') {
       message = 'port ' + app.port + ' is already bound.'
     } else {
@@ -93,13 +93,13 @@ Mat.prototype._middleware = function() {
 
   app.use(logger())
 
-  var mw = []
+  let mw = []
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
   mw.push(serve(app.root))
   mw.push(proxy())
-  var gen = compose(mw)
+  let gen = compose(mw)
   app.use(combo(gen))
 }
 

@@ -37,7 +37,7 @@ Msg.WrongAccept        = '错误请求类型'
 Object.keys(Status).forEach(function(key) {
   exports[key]           = Status[key]
   exports[key + 'Error'] = function(message) {
-    var error    = new Error(message || Msg[key])
+    let error    = new Error(message || Msg[key])
     error.name   = 'MATError'
     error.status = Status[key]
     return error

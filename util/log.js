@@ -1,5 +1,5 @@
-var fmt   = require('util').format
-var chalk = require('chalk')
+let fmt   = require('util').format
+let chalk = require('chalk')
 
 module.exports = Log
 
@@ -20,7 +20,7 @@ function Log(level){
 Log.prototype = {
   log: function(levelStr, args) {
     if (exports[levelStr] <= this.level) {
-      var msg = fmt.apply(null, args)
+      let msg = fmt.apply(null, args)
 
       switch(levelStr) {
         case 'ERROR':
