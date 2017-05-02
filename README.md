@@ -10,16 +10,7 @@
 
 ```javascript
 var mat  = require('mat')
-var rap  = require('mat-rap')
 var proxy = require('mat-proxy')
-
-// rap模拟数据
-mat.task('default', function () {
-  mat.url([/\.json/])
-    .use(rap({
-      projectId: 'your rap project id'
-    }))
-})
 
 // 反向代理
 mat.task('daily', function () {

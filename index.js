@@ -46,6 +46,9 @@ Mat.prototype.env = function (env) {
   if (env.root) {
     app.root = env.root
   }
+  if (env.timeout) {
+    app.timeout = env.timeout
+  }
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
@@ -98,7 +101,7 @@ Mat.prototype._middleware = function() {
     mw.push(url.compose())
   })
   mw.push(serve(app.root))
-  mw.push(proxy())
+  mw.push(proxy(app.timeout))
   let gen = compose(mw)
   app.use(combo(gen))
 }
