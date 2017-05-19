@@ -51,7 +51,7 @@ Mat.prototype.env = function (env) {
   }
 
   if (env.ready) {
-    Mat.prototype.ready = env.ready
+    this.ready = env.ready
   }
 
   // 开启combo url解析
