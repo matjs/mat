@@ -49,6 +49,11 @@ Mat.prototype.env = function (env) {
   if (env.timeout) {
     app.timeout = env.timeout
   }
+
+  if (env.ready) {
+    Mat.prototype.ready = env.ready
+  }
+
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
@@ -69,12 +74,15 @@ Mat.prototype.url = function (rules) {
  * 启动mat服务
  */
 Mat.prototype.launch = function () {
+  var me = this
   this._middleware()
 
   let server = app.listen(app.port, function () {
     log.info()
     log.info(chalk.green('Mat is running on ' + app.port))
     log.info()
+
+    me.ready && me.ready()
   })
 
   server.on('error', function (e) {
