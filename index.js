@@ -82,7 +82,7 @@ Mat.prototype.launch = function () {
     log.info(chalk.green('Mat is running on ' + app.port))
     log.info()
 
-    me.ready && me.ready()
+    me.ready && me.ready(app.port)
   })
 
   server.on('error', function (e) {
