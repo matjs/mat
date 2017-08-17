@@ -50,6 +50,10 @@ Mat.prototype.env = function (env) {
     app.timeout = env.timeout
   }
 
+  if (env.limit) {
+    app.limit = env.limit
+  }
+
   if (env.ready) {
     this.ready = env.ready
   }
@@ -109,7 +113,7 @@ Mat.prototype._middleware = function() {
     mw.push(url.compose())
   })
   mw.push(serve(app.root))
-  mw.push(proxy(app.timeout))
+  mw.push(proxy(app.timeout, app.limit))
   let gen = compose(mw)
   app.use(combo(gen))
 }
