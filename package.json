@@ -1,7 +1,7 @@
 {
   "name": "mat",
   "description": "一个简单命令行工具，提供基础的任务和代理功能",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "repository": {
     "url": "https://github.com/matjs/mat"
   },
