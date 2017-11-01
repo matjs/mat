@@ -13,7 +13,7 @@ let Url          = require('./lib/middleware/url')
 let mutil        = require('./util/mutil')
 let Log          = require('./util/log')
 let log          = new Log('INFO')
-let app          = koa()
+let app          = new koa()
 
 function Mat() {
   Orchestrator.call(this)
