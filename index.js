@@ -83,7 +83,7 @@ Mat.prototype.launch = function () {
 
   let server = app.listen(app.port, function () {
     // log.info()
-    log.info(chalk.green('[mat] Mat is running on ' + app.port))
+    log.info(chalk.green('[mat] Mat is running at port: ' + app.port))
     // log.info()
 
     me.ready && me.ready(app.port)
