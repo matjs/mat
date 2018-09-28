@@ -1,19 +1,19 @@
-let path         = require('path')
-let util         = require('util')
-let koa          = require('koa')
-let compose      = require('koa-compose')
-let chalk        = require('chalk')
+let path = require('path')
+let util = require('util')
+let koa = require('koa')
+let compose = require('koa-compose')
+let chalk = require('chalk')
 let Orchestrator = require('orchestrator')
-let error        = require('./lib/middleware/error')
-let logger       = require('./lib/middleware/logger')
-let combo        = require('./lib/middleware/combo')
-let serve        = require('./lib/middleware/static')
-let proxy        = require('./lib/middleware/proxy')
-let Url          = require('./lib/middleware/url')
-let mutil        = require('./util/mutil')
-let Log          = require('./util/log')
-let log          = new Log('INFO')
-let app          = new koa()
+let error = require('./lib/middleware/error')
+let logger = require('./lib/middleware/logger')
+let combo = require('./lib/middleware/combo')
+let serve = require('./lib/middleware/static')
+let proxy = require('./lib/middleware/proxy')
+let Url = require('./lib/middleware/url')
+let mutil = require('./util/mutil')
+let Log = require('./util/log')
+let log = new Log('INFO')
+let app = new koa()
 
 function Mat() {
   Orchestrator.call(this)
@@ -52,6 +52,10 @@ Mat.prototype.env = function (env) {
 
   if (env.limit) {
     app.limit = env.limit
+  }
+
+  if (env.index) {
+    app.index = env.index
   }
 
   if (env.ready) {
@@ -103,7 +107,7 @@ Mat.prototype.launch = function () {
 /**
  * 加载中间件
  */
-Mat.prototype._middleware = function() {
+Mat.prototype._middleware = function () {
   app.use(error)
 
   app.use(logger())
@@ -112,7 +116,9 @@ Mat.prototype._middleware = function() {
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
-  mw.push(serve(app.root))
+  mw.push(serve(app.root, {
+    index: app.index
+  }))
   mw.push(proxy(app.timeout, app.limit))
   let gen = compose(mw)
   app.use(combo(gen))
