@@ -66,6 +66,10 @@ Mat.prototype.env = function (env) {
     app.log = env.log
   }
 
+  if (env.logger) {
+    app.logger = env.logger
+  }
+
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
@@ -115,7 +119,7 @@ Mat.prototype._middleware = function () {
   app.use(error)
 
   if (app.log) {
-    app.use(logger())
+    app.use(logger(app.logger))
   }
 
   let mw = []
