@@ -110,6 +110,8 @@ Mat.prototype.launch = function () {
     }
     log.error("ERROR:", message)
   })
+
+  this._server = server
 }
 
 /**
@@ -133,5 +135,12 @@ Mat.prototype._middleware = function () {
   let gen = compose(mw)
   app.use(combo(gen))
 }
+
+//提供关闭服务的方法
+Mat.prototype.close = function () {
+  this._server.close()
+}
+
+
 
 module.exports = new Mat()
