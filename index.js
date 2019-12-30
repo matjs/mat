@@ -13,9 +13,11 @@ let Url = require('./lib/middleware/url')
 let mutil = require('./util/mutil')
 let Log = require('./util/log')
 let log = new Log('INFO')
-let app = new koa()
+// let app = new koa()
 
 function Mat() {
+  console.log(`new了一个mat`)
+  this.app = new koa()
   Orchestrator.call(this)
   this.init()
 }
@@ -31,8 +33,8 @@ Mat.prototype.task = Mat.prototype.add
  * 初始化运行参数
  */
 Mat.prototype.init = function () {
-  app.port = 8989
-  app.root = './'
+  this.app.port = 8989
+  this.app.root = './'
   this.urls = []
 }
 
@@ -41,21 +43,21 @@ Mat.prototype.init = function () {
  */
 Mat.prototype.env = function (env) {
   if (env.port) {
-    app.port = env.port
+    this.app.port = env.port
   }
   if (env.root) {
-    app.root = env.root
+    this.app.root = env.root
   }
   if (env.timeout) {
-    app.timeout = env.timeout
+    this.app.timeout = env.timeout
   }
 
   if (env.limit) {
-    app.limit = env.limit
+    this.app.limit = env.limit
   }
 
   if (env.index) {
-    app.index = env.index
+    this.app.index = env.index
   }
 
   if (env.ready) {
@@ -63,17 +65,17 @@ Mat.prototype.env = function (env) {
   }
 
   if (env.log) {
-    app.log = env.log
+    this.app.log = env.log
   }
 
   if (env.logger) {
-    app.logger = env.logger
+    this.app.logger = env.logger
   }
 
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
-    app.combohandler = env.combohandler
+    this.app.combohandler = env.combohandler
   }
 }
 
@@ -93,18 +95,18 @@ Mat.prototype.launch = function () {
   var me = this
   this._middleware()
 
-  let server = app.listen(app.port, function () {
+  let server = this.app.listen(this.app.port, function () {
     // log.info()
-    log.info(chalk.green('[mat] Mat is running at port: ' + app.port))
+    log.info(chalk.green('[mat] Mat is running at port: ' + me.app.port))
     // log.info()
 
-    me.ready && me.ready(app.port)
+    me.ready && me.ready(me.app.port)
   })
 
   server.on('error', function (e) {
     let message
     if (e.errno === 'EADDRINUSE') {
-      message = 'port ' + app.port + ' is already bound.'
+      message = 'port ' + me.app.port + ' is already bound.'
     } else {
       message = 'Unknown Error:' + e.message
     }
@@ -118,22 +120,22 @@ Mat.prototype.launch = function () {
  * 加载中间件
  */
 Mat.prototype._middleware = function () {
-  app.use(error)
+  this.app.use(error)
 
-  if (app.log) {
-    app.use(logger(app.logger))
+  if (this.app.log) {
+    this.app.use(logger(this.app.logger))
   }
 
   let mw = []
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
-  mw.push(serve(app.root, {
-    index: app.index
+  mw.push(serve(this.app.root, {
+    index: this.app.index
   }))
-  mw.push(proxy(app.timeout, app.limit))
+  mw.push(proxy(this.app.timeout, this.app.limit))
   let gen = compose(mw)
-  app.use(combo(gen))
+  this.app.use(combo(gen))
 }
 
 //提供关闭服务的方法
@@ -142,5 +144,4 @@ Mat.prototype.close = function () {
 }
 
 
-
-module.exports = new Mat()
+module.exports = Mat
