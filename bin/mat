@@ -1,23 +1,23 @@
 #!/usr/bin/env node --harmony
 
-var Liftoff     = require('liftoff')
-var minimist    = require('minimist')
-var semver      = require('semver')
-var tildify     = require('tildify')
-var chalk       = require('chalk')
-var cliPackage  = require('../package')
-var Log         = require('../util/log')
-var log         = new Log('INFO')
-var argv        = minimist(process.argv.slice(2))
+var Liftoff = require('liftoff')
+var minimist = require('minimist')
+var semver = require('semver')
+var tildify = require('tildify')
+var chalk = require('chalk')
+var cliPackage = require('../package')
+var Log = require('../util/log')
+var log = new Log('INFO')
+var argv = minimist(process.argv.slice(2))
 var versionFlag = argv.v || argv.version
-var proxyFlag   = argv.p || argv.proxy
+var proxyFlag = argv.p || argv.proxy
 var taskProxyFlag = argv.t || argv.tproxy
-var tasks       = argv._
-var toRun       = tasks.length ? tasks : ['default']
+var tasks = argv._
+var toRun = tasks.length ? tasks : ['default']
 var matInst
 
 var failed = false
-process.once('exit', function(code) {
+process.once('exit', function (code) {
   if (code === 0 && failed) {
     process.exit(1)
   }
@@ -49,9 +49,10 @@ function launch(env) {
     }
     process.exit(0)
   }
-  
+
   if (proxyFlag) {
-    var matInst = require('../index.js')
+    var MatInst = require('../index.js')
+    matInst = new MatInst()
     matInst.launch()
     return
   }
@@ -69,7 +70,8 @@ function launch(env) {
 
   require(env.configPath)
 
-  var matInst = require(env.modulePath)
+  var MatInst = require(env.modulePath)
+  matInst = new MatInst()
 
   // taskWithProxyOverwriteFlag override original proxy setting defined in matfile
   taskProxyFlag && matInst.env({
