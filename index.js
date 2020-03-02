@@ -13,6 +13,10 @@ let Url = require('./lib/middleware/url')
 let mutil = require('./util/mutil')
 let Log = require('./util/log')
 let log = new Log('INFO')
+let https = require('https')
+const http = require('http')
+const fse = require('fs-extra')
+
 
 function Mat() {
   this.app = new koa()
@@ -40,9 +44,12 @@ Mat.prototype.init = function () {
  * 设置运行参数
  */
 Mat.prototype.env = function (env) {
+  this.app.isHttps = !!env.isHttps
+
   if (env.port) {
     this.app.port = env.port
   }
+
   if (env.root) {
     this.app.root = env.root
   }
@@ -93,13 +100,30 @@ Mat.prototype.launch = function () {
   var me = this
   this._middleware()
 
-  let server = this.app.listen(this.app.port, function () {
-    // log.info()
-    log.info(chalk.green('[mat] Mat is running at port: ' + me.app.port))
-    // log.info()
+  let server
+  if (this.app.isHttps) {
+    const keyPath = `${process.env.HOME}/rmx-ssl.key`
+    const certPath = `${process.env.HOME}/rmx-ssl.crt`
 
+    if (!fse.pathExistsSync(keyPath) || !fse.pathExistsSync(certPath)) {
+      throw `检测到本地还未安装自签名ssl证书，请先安装，参考文档：http://gitlab.alibaba-inc.com/mmfs/ssl-cert`
+    }
+
+    //https服务器
+    const options = {
+      key: fse.readFileSync(keyPath),
+      cert: fse.readFileSync(certPath)
+    }
+    server = https.createServer(options, this.app.callback()).listen(this.app.port, ready)
+  } else {
+    //http服务
+    server = http.createServer(this.app.callback()).listen(this.app.port, ready)
+  }
+
+  function ready() {
+    log.info(chalk.cyan(`[mat] Mat${me.app.isHttps ? '(https)' : '(http)'}服务已启动，端口: ${me.app.port}`))
     me.ready && me.ready(me.app.port)
-  })
+  }
 
   server.on('error', function (e) {
     let message
