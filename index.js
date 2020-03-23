@@ -44,6 +44,8 @@ Mat.prototype.init = function () {
  * 设置运行参数
  */
 Mat.prototype.env = function (env) {
+  this.app.keyPath = env.keyPath || `${process.env.HOME}/rmx-ssl.key` //默认在用户目录下
+  this.app.certPath = env.certPath || `${process.env.HOME}/rmx-ssl.crt`
   this.app.isHttps = !!env.isHttps
 
   if (env.port) {
@@ -102,8 +104,8 @@ Mat.prototype.launch = function () {
 
   let server
   if (this.app.isHttps) {
-    const keyPath = `${process.env.HOME}/rmx-ssl.key`
-    const certPath = `${process.env.HOME}/rmx-ssl.crt`
+    const keyPath = this.app.keyPath
+    const certPath = this.app.certPath
 
     if (!fse.pathExistsSync(keyPath) || !fse.pathExistsSync(certPath)) {
       throw `检测到本地还未安装自签名ssl证书，请先安装，参考文档：http://gitlab.alibaba-inc.com/mmfs/ssl-cert`
