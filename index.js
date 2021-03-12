@@ -1,6 +1,7 @@
 const path = require('path')
 const util = require('util')
 const koa = require('koa')
+const cors = require('koa-cors')
 const compose = require('koa-compose')
 const chalk = require('chalk')
 const Orchestrator = require('orchestrator')
@@ -78,6 +79,8 @@ Mat.prototype.env = function (env) {
     this.app.logger = env.logger
   }
 
+  this.app.koaCorsConfig = env.koaCorsConfig
+
   // 开启combo url解析
   // 默认关闭
   if (env.combohandler) {
@@ -139,6 +142,7 @@ Mat.prototype.launch = function () {
  * 加载中间件
  */
 Mat.prototype._middleware = function () {
+  this.app.use(cors(this.app.koaCorsConfig))
   this.app.use(error)
 
   if (this.app.log) {
