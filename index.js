@@ -1,24 +1,23 @@
-let path = require('path')
-let util = require('util')
-let koa = require('koa')
-let compose = require('koa-compose')
-let chalk = require('chalk')
-let Orchestrator = require('orchestrator')
-let error = require('./lib/middleware/error')
-let logger = require('./lib/middleware/logger')
-let combo = require('./lib/middleware/combo')
-let serve = require('./lib/middleware/static')
-let proxy = require('./lib/middleware/proxy')
-let Url = require('./lib/middleware/url')
-let mutil = require('./util/mutil')
-let Log = require('./util/log')
-let log = new Log('INFO')
-let https = require('https')
+const path = require('path')
+const util = require('util')
+const koa = require('koa')
+const compose = require('koa-compose')
+const chalk = require('chalk')
+const Orchestrator = require('orchestrator')
+const error = require('./lib/middleware/error')
+const logger = require('./lib/middleware/logger')
+const combo = require('./lib/middleware/combo')
+const serve = require('./lib/middleware/static')
+const proxy = require('./lib/middleware/proxy')
+const Url = require('./lib/middleware/url')
+const mutil = require('./util/mutil')
+const Log = require('./util/log')
+const log = new Log('INFO')
+const https = require('https')
 const http = require('http')
 const fse = require('fs-extra')
 
-
-function Mat() {
+function Mat () {
   this.app = new koa()
   Orchestrator.call(this)
   this.init()
@@ -90,7 +89,7 @@ Mat.prototype.env = function (env) {
  * url过滤器
  */
 Mat.prototype.url = function (rules) {
-  let url = new Url(rules)
+  const url = new Url(rules)
   this.urls.push(url)
   return url
 }
@@ -99,7 +98,7 @@ Mat.prototype.url = function (rules) {
  * 启动mat服务
  */
 Mat.prototype.launch = function () {
-  var me = this
+  const me = this
   this._middleware()
 
   let server
@@ -107,18 +106,18 @@ Mat.prototype.launch = function () {
     const keyPath = this.app.keyPath
     const certPath = this.app.certPath
 
-    //https服务器
+    // https服务器
     const options = {
       key: fse.readFileSync(keyPath),
       cert: fse.readFileSync(certPath)
     }
     server = https.createServer(options, this.app.callback()).listen(this.app.port, ready)
   } else {
-    //http服务
+    // http服务
     server = http.createServer(this.app.callback()).listen(this.app.port, ready)
   }
 
-  function ready() {
+  function ready () {
     log.info(chalk.cyan(`[mat] Mat${me.app.isHttps ? '(https)' : '(http)'}服务已启动，端口: ${me.app.port}`))
     me.ready && me.ready(me.app.port)
   }
@@ -130,7 +129,7 @@ Mat.prototype.launch = function () {
     } else {
       message = 'Unknown Error:' + e.message
     }
-    log.error("ERROR:", message)
+    log.error('ERROR:', message)
   })
 
   this._server = server
@@ -146,7 +145,7 @@ Mat.prototype._middleware = function () {
     this.app.use(logger(this.app.logger))
   }
 
-  let mw = []
+  const mw = []
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
@@ -154,14 +153,13 @@ Mat.prototype._middleware = function () {
     index: this.app.index
   }))
   mw.push(proxy(this.app.timeout, this.app.limit))
-  let gen = compose(mw)
+  const gen = compose(mw)
   this.app.use(combo(gen))
 }
 
-//提供关闭服务的方法
+// 提供关闭服务的方法
 Mat.prototype.close = function () {
   this._server.close()
 }
-
 
 module.exports = Mat

@@ -1,5 +1,5 @@
-let fmt   = require('util').format
-let chalk = require('chalk')
+const fmt = require('util').format
+const chalk = require('chalk')
 
 module.exports = Log
 
@@ -11,18 +11,18 @@ exports.INFO = 2
 
 exports.DEBUG = 3
 
-function Log(level){
-  if ('string' == typeof level) level = exports[level.toUpperCase()]
+function Log (level) {
+  if (typeof level === 'string') level = exports[level.toUpperCase()]
   this.level = level || exports.DEBUG
   this.stream = process.stdout
 }
 
 Log.prototype = {
-  log: function(levelStr, args) {
+  log: function (levelStr, args) {
     if (exports[levelStr] <= this.level) {
       let msg = fmt.apply(null, args)
 
-      switch(levelStr) {
+      switch (levelStr) {
         case 'ERROR':
           msg = chalk.red(msg)
           break
@@ -40,16 +40,16 @@ Log.prototype = {
       this.stream.write(msg + '\n')
     }
   },
-  error: function(msg){
+  error: function (msg) {
     this.log('ERROR', arguments)
   },
-  warn: function(msg){
+  warn: function (msg) {
     this.log('WARNING', arguments)
   },
-  info: function(msg){
+  info: function (msg) {
     this.log('INFO', arguments)
   },
-  debug: function(msg){
+  debug: function (msg) {
     this.log('DEBUG', arguments)
   }
 }
