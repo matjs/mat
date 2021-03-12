@@ -1,29 +1,29 @@
 #!/usr/bin/env node --harmony
 
-var Liftoff = require('liftoff')
-var minimist = require('minimist')
-var semver = require('semver')
-var tildify = require('tildify')
-var chalk = require('chalk')
-var cliPackage = require('../package')
-var Log = require('../util/log')
-var log = new Log('INFO')
-var argv = minimist(process.argv.slice(2))
-var versionFlag = argv.v || argv.version
-var proxyFlag = argv.p || argv.proxy
-var taskProxyFlag = argv.t || argv.tproxy
-var tasks = argv._
-var toRun = tasks.length ? tasks : ['default']
-var matInst
+const Liftoff = require('liftoff')
+const minimist = require('minimist')
+const semver = require('semver')
+const tildify = require('tildify')
+const chalk = require('chalk')
+const cliPackage = require('../package')
+const Log = require('../util/log')
+const log = new Log('INFO')
+const argv = minimist(process.argv.slice(2))
+const versionFlag = argv.v || argv.version
+const proxyFlag = argv.p || argv.proxy
+const taskProxyFlag = argv.t || argv.tproxy
+const tasks = argv._
+const toRun = tasks.length ? tasks : ['default']
+let matInst
 
-var failed = false
+let failed = false
 process.once('exit', function (code) {
   if (code === 0 && failed) {
     process.exit(1)
   }
 })
 
-var cli = new Liftoff({
+const cli = new Liftoff({
   name: 'mat'
 })
 
@@ -34,7 +34,7 @@ cli.launch({
   completion: argv.completion
 }, launch)
 
-function launch(env) {
+function launch (env) {
   if (env.modulePackage && typeof env.modulePackage.version !== 'undefined') {
     if (semver.gt(cliPackage.version, env.modulePackage.version)) {
       log.warn('Global mat version', cliPackage.version)
@@ -85,7 +85,7 @@ function launch(env) {
   })
 }
 
-function logEvents(matInst) {
+function logEvents (matInst) {
   matInst.on('err', function () {
     failed = true
   })
@@ -99,7 +99,7 @@ function logEvents(matInst) {
   })
 
   matInst.on('task_err', function (e) {
-    var msg = formatError(e)
+    const msg = formatError(e)
     log.error('\'' + e.task + '\' error')
     log.error(msg)
   })
@@ -110,7 +110,7 @@ function logEvents(matInst) {
   })
 }
 
-function formatError(e) {
+function formatError (e) {
   if (!e.err) {
     return e.message
   }
