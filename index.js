@@ -2,6 +2,7 @@ const path = require('path')
 const util = require('util')
 const koa = require('koa')
 const cors = require('koa-cors')
+const convert = require('koa-convert')
 const compose = require('koa-compose')
 const chalk = require('chalk')
 const Orchestrator = require('orchestrator')
@@ -142,11 +143,11 @@ Mat.prototype.launch = function () {
  * 加载中间件
  */
 Mat.prototype._middleware = function () {
-  this.app.use(cors(this.app.koaCorsConfig))
-  this.app.use(error)
+  this.app.use(convert(cors(this.app.koaCorsConfig)))
+  this.app.use(convert(error))
 
   if (this.app.log) {
-    this.app.use(logger(this.app.logger))
+    this.app.use(convert(logger(this.app.logger)))
   }
 
   const mw = []
@@ -158,7 +159,7 @@ Mat.prototype._middleware = function () {
   }))
   mw.push(proxy(this.app.timeout, this.app.limit))
   const gen = compose(mw)
-  this.app.use(combo(gen))
+  this.app.use(convert(combo(gen)))
 }
 
 // 提供关闭服务的方法
