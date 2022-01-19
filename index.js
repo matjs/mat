@@ -1,6 +1,6 @@
 const util = require('util')
 const koa = require('koa')
-const cors = require('koa-cors')
+const cors = require('@koa/cors')
 const convert = require('koa-convert')
 const compose = require('koa-compose')
 const chalk = require('chalk')
@@ -17,7 +17,7 @@ const https = require('https')
 const http = require('http')
 const fse = require('fs-extra')
 
-function Mat () {
+function Mat() {
   this.app = new koa()
   Orchestrator.call(this)
   this.init()
@@ -113,14 +113,22 @@ Mat.prototype.launch = function () {
       key: fse.readFileSync(keyPath),
       cert: fse.readFileSync(certPath)
     }
-    server = https.createServer(options, this.app.callback()).listen(this.app.port, ready)
+    server = https
+      .createServer(options, this.app.callback())
+      .listen(this.app.port, ready)
   } else {
     // http服务
     server = http.createServer(this.app.callback()).listen(this.app.port, ready)
   }
 
-  function ready () {
-    log.info(chalk.cyan(`[mat] Mat${me.app.isHttps ? '(https)' : '(http)'}服务已启动，端口: ${me.app.port}`))
+  function ready() {
+    log.info(
+      chalk.cyan(
+        `[mat] Mat${me.app.isHttps ? '(https)' : '(http)'}服务已启动，端口: ${
+          me.app.port
+        }`
+      )
+    )
     me.ready && me.ready(me.app.port)
   }
 
@@ -152,9 +160,11 @@ Mat.prototype._middleware = function () {
   this.urls.forEach(function (url) {
     mw.push(url.compose())
   })
-  mw.push(serve(this.app.root, {
-    index: this.app.index
-  }))
+  mw.push(
+    serve(this.app.root, {
+      index: this.app.index
+    })
+  )
   mw.push(proxy(this.app.timeout, this.app.limit))
   const gen = compose(mw)
   this.app.use(convert(combo(gen)))
