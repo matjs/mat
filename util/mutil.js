@@ -13,6 +13,11 @@ module.exports = {
     if (constructor.name === 'GeneratorFunction' || constructor.displayName === 'GeneratorFunction') return true
     return this.isGenerator(constructor.prototype)
   },
+  isSSE: function (headers) {
+    // 检测是否为 Server-Sent Events 请求/响应
+    const contentType = headers['content-type'] || headers['Content-Type'] || ''
+    return contentType.toLowerCase().includes('text/event-stream')
+  },
   cobody: function (stream) {
     return function (cb) {
       const buffers = []
