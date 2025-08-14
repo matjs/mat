@@ -1,7 +1,7 @@
 {
   "name": "mat",
   "description": "一个简单命令行工具，提供基础的任务和代理功能",
-  "version": "1.0.21",
+  "version": "1.0.20",
   "repository": {
     "url": "https://github.com/matjs/mat"
   },
@@ -23,6 +23,7 @@
     "dayjs": "^1.10.7",
     "debug": "^4.3.2",
     "fs-extra": "^8.1.0",
+    "http-proxy": "^1.18.1",
     "koa": "^2.13.4",
     "koa-compose": "2.3.0",
     "koa-convert": "1.2.0",

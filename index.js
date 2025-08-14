@@ -121,6 +121,21 @@ Mat.prototype.launch = function () {
     server = http.createServer(this.app.callback()).listen(this.app.port, ready)
   }
 
+  // 调整 Node Server 超时，避免 SSE 长连接被过早关闭
+  try {
+    // 不限制请求头超时/请求超时/keep-alive 超时（Node 版本差异容错处理）
+    if (typeof server.keepAliveTimeout === 'number') server.keepAliveTimeout = 0
+    if (typeof server.headersTimeout === 'number') server.headersTimeout = 0
+    if (typeof server.requestTimeout === 'number') server.requestTimeout = 0
+    if (typeof server.setTimeout === 'function') server.setTimeout(0)
+    server.on('connection', function (socket) {
+      try {
+        socket.setKeepAlive(true, 60000)
+        socket.setNoDelay(true)
+      } catch (e) {}
+    })
+  } catch (e) {}
+
   function ready() {
     log.info(
       chalk.cyan(
